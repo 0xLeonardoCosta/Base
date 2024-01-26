@@ -6,18 +6,32 @@ using UnityEngine.UIElements;
 public class Player : MonoBehaviour
 {
     [SerializeField] float _speed;
+    [SerializeField] float _degrade = 5f;
+
+    [SerializeField] SpriteRenderer _spr;
+    [SerializeField] Rigidbody2D _rb;
+    [SerializeField] CapsuleCollider2D _capsuleCollider;
 
     void Start()
     {
         gameObject.name = "Player";
+
+        _spr = GetComponent<SpriteRenderer>();
+        _spr.color = Color.blue;
+
+        _rb = GetComponent<Rigidbody2D>();
+        _rb.gravityScale = 0f;
+
+        _capsuleCollider = GetComponent<CapsuleCollider2D>();
+        _capsuleCollider.isTrigger = false;
     }
    
     void Update()
     {
         float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertital");
+        float v = Input.GetAxisRaw("Vertical");
 
-        //transform.position = transform.Translate(h , v, transform.position.z) * _speed * Time.deltaTime;
+        transform.Translate( h * _speed * Time.deltaTime, v * _speed * Time.deltaTime, 0);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -26,16 +40,19 @@ public class Player : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Inimigo"))
         {
-            collision.GetComponent<SpriteRenderer>().color = Color.blue;  
+            //collision.GetComponent<Inimigo>()._tipo += 1;
 
-            if (collision.GetComponent<Inimigo>()._tipo == 1)
+            if (collision.GetComponent<Inimigo>()._tipo == 0)
             {
-                collision.GetComponent<Inimigo>()._vida -= 5;
+                collision.GetComponent<SpriteRenderer>().color = Color.yellow;
             }
-            else if (collision.GetComponent<Inimigo>()._tipo == 2)
+            else if (collision.GetComponent<Inimigo>()._tipo == 1)
             {
-                collision.GetComponent<Inimigo>()._vida -= 3;
+                collision.GetComponent<SpriteRenderer>().color = Color.red;
             }
+
+            //collision.GetComponent<SpriteRenderer>().color = Color.red;
+            //collision.GetComponent<SpriteRenderer>().color = Color.Lerp (Color.red, Color.blue, 5f);
         }
     }
 }
